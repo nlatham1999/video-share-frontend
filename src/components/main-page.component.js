@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Nav, Navbar } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import UserCell from './user-cell.component';
@@ -22,7 +22,15 @@ const MainPage = ({setUser}) => {
 
     return ( 
         <div >
-            Main Page 
+            <Container>
+                <Navbar>
+                    <Navbar.Brand>
+                        Video Share - Admin View
+                    </Navbar.Brand>
+                    <Button onClick={() => setAddNewUserFlag(true)}>Add New User</Button>
+                    <Button variant="danger" onClick={() => deleteAllUsers()}>Nuke Database</Button>
+                </Navbar>
+            </Container>
             <Container>
                 {users &&
                 users.map((user, i) => (
@@ -32,17 +40,16 @@ const MainPage = ({setUser}) => {
             </Container>
             <AddUser addNewUser={addNewUser} addNewUserFlag={addNewUserFlag} setAddNewUserFlag={setAddNewUserFlag} newUser={newUser}/>
 
-            <Button onClick={() => deleteAllUsers()}>Delete All Users</Button>
-            <Button onClick={() => setAddNewUserFlag(true)}>Add New User</Button>
         </div>
     );
 
     function addNewUser(){
         console.log("adding new user")
         setAddNewUserFlag(false)
-        axios.post(url + "user/add", {
+        axios.post(process.env.REACT_APP_URL + "user/add", {
                 "email": newUser.email,
-                "media": []
+                "media": [],
+                "shared": []
         },
         {
             'headers': {
@@ -59,7 +66,7 @@ const MainPage = ({setUser}) => {
 
     function deleteAllUsers(){
         console.log("deleting all the users")
-        axios.delete(url + "users/delete", {
+        axios.delete(process.env.REACT_APP_URL + "users/delete", {
             'headers': {
                 'X-Auth-Token': process.env.REACT_APP_API_KEY
             },
@@ -74,7 +81,7 @@ const MainPage = ({setUser}) => {
 
     function getAllUsers() {
         console.log("getting all the users")
-        axios.get(url + "users", {
+        axios.get(process.env.REACT_APP_URL + "users", {
             'headers': {
                 'X-Auth-Token': process.env.REACT_APP_API_KEY
             },
@@ -88,8 +95,8 @@ const MainPage = ({setUser}) => {
     }
 
     function deleteUser(id){
-        console.log("deleting order")
-        axios.delete(url + "user/delete/" + id, {
+        console.log("deleting user")
+        axios.delete(process.env.REACT_APP_URL + "user/delete/" + id, {
             'headers': {
                 'X-Auth-Token': process.env.REACT_APP_API_KEY
             },

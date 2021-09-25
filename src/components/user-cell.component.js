@@ -8,11 +8,17 @@ const UserCell = ({user, deleteUser, setUser}) => {
     return(
         <Card>
             <Row>
-                <Col>{user.email}</Col>
-                <Link to={"/user"} style={{textDecoration: "none"}}>
-                    <Col><Button onClick={() => setUser(user)} >View</Button></Col>
-                </Link>
-                <Col><Button onClick={() => deleteUser(user._id)}>Delete</Button></Col>
+                <Col>
+                    {user.email}
+                </Col>
+                <Col>
+                    <Link to={"/user"} style={{textDecoration: "none"}}>
+                        <Col><Button onClick={() => setUser(user)} >View</Button></Col>
+                    </Link>
+                </Col>
+                <Col>
+                    <Button variant="danger" onClick={() => deleteUser(user._id)}>Delete</Button>
+                </Col>
             </Row>
         </Card>
     );
