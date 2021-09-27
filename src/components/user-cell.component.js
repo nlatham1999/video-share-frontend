@@ -6,21 +6,21 @@ import { Link} from 'react-router-dom';
 
 const UserCell = ({user, deleteUser, setUser}) => {
     return(
-        <Card>
+        <div style={{"paddingBottom": "1%"}}>
             <Row>
                 <Col>
                     {user.email}
                 </Col>
                 <Col>
-                    <Link to={"/user"} style={{textDecoration: "none"}}>
-                        <Col><Button onClick={() => setUser(user)} >View</Button></Col>
-                    </Link>
                 </Col>
                 <Col>
+                    <Link to={"/user"} style={{textDecoration: "none"}}>
+                        <Button onClick={() => setUser(user)} >View</Button>{' '}
+                    </Link>
                     <Button variant="danger" onClick={() => deleteUser(user._id)}>Delete</Button>
                 </Col>
             </Row>
-        </Card>
+        </div>
     );
 }
 

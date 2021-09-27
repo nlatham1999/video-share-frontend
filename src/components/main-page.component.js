@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Container, Button, Nav, Navbar } from "react-bootstrap";
+import { Container, Button, Nav, Navbar, Card } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import UserCell from './user-cell.component';
@@ -32,11 +32,18 @@ const MainPage = ({setUser}) => {
                 </Navbar>
             </Container>
             <Container>
-                {users &&
-                users.map((user, i) => (
-                        <UserCell user={user} deleteUser={deleteUser} setUser={setUser}/>
-                    ))
-                }
+                <Card>
+                    <Card.Header>
+                        Users
+                    </Card.Header>
+                    <Card.Body>
+                        {users &&
+                        users.map((user, i) => (
+                                <UserCell user={user} deleteUser={deleteUser} setUser={setUser}/>
+                            ))
+                        }
+                    </Card.Body>
+                </Card>
             </Container>
             <AddUser addNewUser={addNewUser} addNewUserFlag={addNewUserFlag} setAddNewUserFlag={setAddNewUserFlag} newUser={newUser}/>
 
