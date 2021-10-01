@@ -15,6 +15,9 @@ const UserDetail = ({user}) => {
     const [newAccessor, setNewAccessor] = useState("")
     const [selectedVideo, setSelectedVideo] = useState({})
     const [refresh, setRefresh] = useState(false)
+    const [mediaFile, setMediaFile] = useState({preview: "", raw: "" })
+
+    var data = new FormData
 
     if(refreshMyVideos){
         setRefreshMyVideos(false)
@@ -24,6 +27,35 @@ const UserDetail = ({user}) => {
     if(refreshSharedVideos){
         setRefreshSharedVideos(false)
         getSharedMedia()
+    }
+
+    const handleVideoUpload = async e => {
+        console.log("uploading media file")
+        
+        var formData = new FormData()
+        formData.append("video", mediaFile.raw)
+
+        for (var [key, value] of formData.entries()) { 
+            console.log("TEST", key, value);
+        }
+
+        axios.post(process.env.REACT_APP_URL+"media/post-image",
+            formData
+        ,{
+            'headers': {
+                'content-type': 'multipart/form-data',
+                'X-Auth-Token': process.env.REACT_APP_API_KEY
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response.status)
+            if(response.status == 200){
+                // setMyVideos(response.data)
+            }
+            for (var [key, value] of formData.entries()) { 
+                console.log("TEST2: ", key, value);
+            }
+        })
     }
 
     if(!user || user == {}){
@@ -54,7 +86,7 @@ const UserDetail = ({user}) => {
                         My Videos
                     </Card.Header>
                     <Card.Body>
-                        {myVideos &&
+                        {myVideos && myVideos[0] &&
                         myVideos.map((video, i) => (
                             <div style={{"paddingBottom": "1%"}}>
                                 <Row>
@@ -62,7 +94,7 @@ const UserDetail = ({user}) => {
                                         {video.name}{' '}
                                     </Col>
                                     <Col>
-                                        Shared With: {video.viewers.length}{' '}
+                                        Shared With: {video.viewers && video.viewers.length}{' '}
                                     </Col>
                                     <Col style={{}}>
                                         <Button >View</Button> {' '}
@@ -106,6 +138,7 @@ const UserDetail = ({user}) => {
                 </Card>
             </Container>    
 
+            {/* add media */}
             <Modal show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Video</Modal.Title>
@@ -116,9 +149,13 @@ const UserDetail = ({user}) => {
                         <Form.Label >name</Form.Label>
                         <Form.Control onChange={(event) => {newVideo.name = event.target.value}}/>
                     </Form.Group>
+                    <input type="file" onChange={onFileChange}/>
+                    <Button onClick={() => handleVideoUpload()}>upload</Button>
+                </Modal.Body>
+                <Modal.Footer>
                     <Button onClick={() => addMedia()}>Add</Button>
                     <Button onClick={() => setAddVideoFlag(false)}>Cancel</Button>
-                </Modal.Body>
+                </Modal.Footer>
             </Modal>
 
             {/* manage access */}
@@ -129,11 +166,11 @@ const UserDetail = ({user}) => {
 
                 <Modal.Body>
                     <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Label >New Accessor</Form.Label>
-                                <Form.Control onChange={(event) => {setNewAccessor(event.target.value)}}/>
-                            </Form.Group>
-                            <Button onClick={() => addAccessor()}>Add</Button>
+                        <Form.Group className="mb-3">
+                            <Form.Label >New Accessor</Form.Label>
+                            <Form.Control onChange={(event) => {setNewAccessor(event.target.value)}}/>
+                        </Form.Group>
+                        <Button onClick={() => addAccessor()}>Add</Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Body>
@@ -159,9 +196,22 @@ const UserDetail = ({user}) => {
         </div>
     )
 
+
+    function onFileChange(event){
+        if (event.target.files.length) {
+            setMediaFile({
+                preview: URL.createObjectURL(event.target.files[0]),
+                raw: event.target.files[0]
+            });   
+        }
+    }
+
     function closeAccessManagerPopup(){
         setManageAccessFlag(false)
         setRefreshMyVideos(true)
+    }
+
+    function uploadMediaFile(){
     }
 
     function getMediaForUser(){
