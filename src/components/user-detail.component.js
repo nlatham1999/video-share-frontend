@@ -34,12 +34,13 @@ const UserDetail = ({user}) => {
         
         var formData = new FormData()
         formData.append("video", mediaFile.raw)
+        formData.append("name", user.media[user.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
 
         for (var [key, value] of formData.entries()) { 
             console.log("TEST", key, value);
         }
 
-        axios.post(process.env.REACT_APP_URL+"media/post-image",
+        axios.post(process.env.REACT_APP_URL+"media/post-media",
             formData
         ,{
             'headers': {
@@ -50,7 +51,7 @@ const UserDetail = ({user}) => {
         }).then(response => {
             console.log(response.status)
             if(response.status == 200){
-                // setMyVideos(response.data)
+                setRefreshMyVideos(true)
             }
             for (var [key, value] of formData.entries()) { 
                 console.log("TEST2: ", key, value);
@@ -150,7 +151,6 @@ const UserDetail = ({user}) => {
                         <Form.Control onChange={(event) => {newVideo.name = event.target.value}}/>
                     </Form.Group>
                     <input type="file" onChange={onFileChange}/>
-                    <Button onClick={() => handleVideoUpload()}>upload</Button>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={() => addMedia()}>Add</Button>
@@ -203,7 +203,14 @@ const UserDetail = ({user}) => {
                 preview: URL.createObjectURL(event.target.files[0]),
                 raw: event.target.files[0]
             });   
+            var test = getFileExtension(event.target.files[0].name)
+            console.log(test)
         }
+    }
+
+    function getFileExtension(fileName){
+        var arr = fileName.split(".")
+        return arr[arr.length-1]
     }
 
     function closeAccessManagerPopup(){
@@ -324,7 +331,7 @@ const UserDetail = ({user}) => {
             console.log(response.status)
             if(response.status == 200){
                 user.media.push(response.data["InsertedID"])
-                setRefreshMyVideos(true)
+                handleVideoUpload()
             }
         })
     }
