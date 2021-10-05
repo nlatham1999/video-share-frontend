@@ -84,6 +84,19 @@ const MainPage = ({setUser}) => {
                 setRefreshData(true)
             }
         })
+        deleteAllMediaFromS3()
+    }
+
+    function deleteAllMediaFromS3(){
+        console.log("deleting all media from s3")
+        axios.get(process.env.REACT_APP_URL+"media/empty-bucket",{
+            'headers': {
+                'X-Auth-Token': process.env.REACT_APP_API_KEY
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response.status)
+        })
     }
 
     function getAllUsers() {
