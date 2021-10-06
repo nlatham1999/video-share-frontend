@@ -318,9 +318,12 @@ const UserDetail = ({user}) => {
     function addMedia(){
         console.log("adding media for user")
         setAddVideoFlag(false)
+        var mediatype = getFileExtension(mediaFile.raw.name)
         axios.post(process.env.REACT_APP_URL + "media/add",{
             "name": newVideo.name,
             "owner": user.email,
+            "location": "",
+            "mediatype": mediatype,
             "viewers": []
         }, {
             'headers': {
