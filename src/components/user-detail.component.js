@@ -16,7 +16,9 @@ const UserDetail = ({user}) => {
     const [selectedVideo, setSelectedVideo] = useState({})
     const [refresh, setRefresh] = useState(false)
     const [mediaFile, setMediaFile] = useState({preview: "", raw: "" })
-
+    const [showMediaFlag, setShowMediaFlag] = useState(false)
+    const [mediaLink, setMediaLink] = useState("")
+ 
     var data = new FormData
 
     if(refreshMyVideos){
@@ -90,6 +92,7 @@ const UserDetail = ({user}) => {
                         {myVideos && myVideos[0] &&
                         myVideos.map((video, i) => (
                             <div style={{"paddingBottom": "1%"}}>
+                            {console.log(video)}
                                 <Row>
                                     <Col>
                                         {video.name}{' '}
@@ -98,7 +101,7 @@ const UserDetail = ({user}) => {
                                         Shared With: {video.viewers && video.viewers.length}{' '}
                                     </Col>
                                     <Col style={{}}>
-                                        <Button >View</Button> {' '}
+                                        <Button onClick={()=>{getMediaLink(video.location)}}>View</Button> {' '}
                                         <Button onClick={() => {setSelectedVideo(video); setManageAccessFlag(true)}}>Share</Button>{' '}
                                         <Button variant="danger" onClick={() => deleteSingleMedia(video._id, i)}>Delete</Button>
                                     </Col>
@@ -192,6 +195,17 @@ const UserDetail = ({user}) => {
                     <Button onClick={() => closeAccessManagerPopup()}>Close</Button>
                 </Modal.Footer>
             </Modal>
+            
+            {/* show media */}
+            <Modal show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
+                <Modal.Header closeButton>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {console.log(mediaLink)}
+                    <img src={mediaLink} alt=""></img>
+                </Modal.Body>
+            </Modal>
 
         </div>
     )
@@ -208,6 +222,23 @@ const UserDetail = ({user}) => {
         }
     }
 
+    function getMediaLink(location){
+        console.log("getting media link")
+        axios.get(process.env.REACT_APP_URL + "media/get-presigned-url/" + location, {
+            'headers': {
+                'X-Auth-Token': process.env.REACT_APP_API_KEY
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response.status)
+            console.log(response)
+            if(response.status == 200){
+                setMediaLink(response.data)
+                setShowMediaFlag(true)
+            }
+        })
+    }
+
     function getFileExtension(fileName){
         var arr = fileName.split(".")
         return arr[arr.length-1]
@@ -216,9 +247,6 @@ const UserDetail = ({user}) => {
     function closeAccessManagerPopup(){
         setManageAccessFlag(false)
         setRefreshMyVideos(true)
-    }
-
-    function uploadMediaFile(){
     }
 
     function getMediaForUser(){
