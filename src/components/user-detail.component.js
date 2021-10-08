@@ -17,9 +17,8 @@ const UserDetail = ({user}) => {
     const [refresh, setRefresh] = useState(false)
     const [mediaFile, setMediaFile] = useState({preview: "", raw: "" })
     const [showMediaFlag, setShowMediaFlag] = useState(false)
-    const [mediaLink, setMediaLink] = useState("")
- 
-    var data = new FormData
+    const [currentMediaLink, setCurrentMediaLink] = useState("")
+    const [mediaLinkDict, setMediaLinkDict] = useState({})
 
     if(refreshMyVideos){
         setRefreshMyVideos(false)
@@ -38,9 +37,9 @@ const UserDetail = ({user}) => {
         formData.append("video", mediaFile.raw)
         formData.append("name", user.media[user.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
 
-        for (var [key, value] of formData.entries()) { 
-            console.log("TEST", key, value);
-        }
+        // for (var [key, value] of formData.entries()) { 
+        //     console.log("TEST", key, value);
+        // }
 
         axios.post(process.env.REACT_APP_URL+"media/post-media",
             formData
@@ -55,9 +54,9 @@ const UserDetail = ({user}) => {
             if(response.status == 200){
                 setRefreshMyVideos(true)
             }
-            for (var [key, value] of formData.entries()) { 
-                console.log("TEST2: ", key, value);
-            }
+            // for (var [key, value] of formData.entries()) { 
+            //     console.log("TEST2: ", key, value);
+            // }
         })
     }
 
@@ -92,7 +91,6 @@ const UserDetail = ({user}) => {
                         {myVideos && myVideos[0] &&
                         myVideos.map((video, i) => (
                             <div style={{"paddingBottom": "1%"}}>
-                            {console.log(video)}
                                 <Row>
                                     <Col>
                                         {video.name}{' '}
@@ -101,7 +99,7 @@ const UserDetail = ({user}) => {
                                         Shared With: {video.viewers && video.viewers.length}{' '}
                                     </Col>
                                     <Col style={{}}>
-                                        <Button onClick={()=>{getMediaLink(video.location)}}>View</Button> {' '}
+                                        <Button onClick={()=> onViewButtonClicked(video.location)}>View</Button> {' '}
                                         <Button onClick={() => {setSelectedVideo(video); setManageAccessFlag(true)}}>Share</Button>{' '}
                                         <Button variant="danger" onClick={() => deleteSingleMedia(video._id, i)}>Delete</Button>
                                     </Col>
@@ -202,13 +200,24 @@ const UserDetail = ({user}) => {
                 </Modal.Header>
 
                 <Modal.Body>
-                    {console.log(mediaLink)}
-                    <img src={mediaLink} alt=""></img>
+                    <img src={currentMediaLink} alt=""></img>
                 </Modal.Body>
             </Modal>
 
         </div>
     )
+
+    //Called when the view button is clicked 
+    //if the presigned url is stored, then that is used
+    //otherwise a new presigned url is taken
+    function onViewButtonClicked(mediaLocation){
+        if(mediaLinkDict[mediaLocation]){
+            setCurrentMediaLink(mediaLinkDict[mediaLocation])
+            setShowMediaFlag(true)
+        }else{
+            getMediaLink(mediaLocation)
+        }
+    }
 
 
     function onFileChange(event){
@@ -217,11 +226,11 @@ const UserDetail = ({user}) => {
                 preview: URL.createObjectURL(event.target.files[0]),
                 raw: event.target.files[0]
             });   
-            var test = getFileExtension(event.target.files[0].name)
-            console.log(test)
         }
     }
 
+    //gets a presigned url for a media object
+    //on success, the presigned url is stored for later usage
     function getMediaLink(location){
         console.log("getting media link")
         axios.get(process.env.REACT_APP_URL + "media/get-presigned-url/" + location, {
@@ -231,9 +240,9 @@ const UserDetail = ({user}) => {
             responseType: 'json',
         }).then(response => {
             console.log(response.status)
-            console.log(response)
             if(response.status == 200){
-                setMediaLink(response.data)
+                mediaLinkDict[location] = response.data
+                setCurrentMediaLink(response.data)
                 setShowMediaFlag(true)
             }
         })
