@@ -1,0 +1,11 @@
+body {
+    background-color:#e0e0e0;
+    font-family:'Baloo Thambi 2', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+}
+
+.container {
+    text-align: center;
+    font-size: xx-large;
+    padding-top: 4vh;
+}
