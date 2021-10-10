@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import UserCell from './user-cell.component';
 import AddUser from './add-user.component';
+import LoginButton from './login-button.component';
+import LogoutButton from './logout-button.component';
 
 const MainPage = ({setUser}) => {
 
@@ -27,6 +29,8 @@ const MainPage = ({setUser}) => {
                     <Navbar.Brand>
                         Video Share - Admin View
                     </Navbar.Brand>
+                    <LoginButton />
+                    <LogoutButton />
                     <Button onClick={() => setAddNewUserFlag(true)}>Add New User</Button>
                     <Button variant="danger" onClick={() => deleteAllUsers()}>Nuke Database</Button>
                 </Navbar>
