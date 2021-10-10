@@ -2,15 +2,17 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth0 } from '@auth0/auth0-react';
+import LogoutButton from './logout-button.component';
 
-const UserDetail = ({user}) => {
+const UserDetail = () => {
 
     const [myVideos, setMyVideos] = useState([])
     const [sharedWithMe, setSharedWithMe] = useState([])
-    const [refreshMyVideos, setRefreshMyVideos] = useState(true)
-    const [refreshSharedVideos, setRefreshSharedVideos] = useState(true)
+    const [refreshMyVideos, setRefreshMyVideos] = useState(false)
+    const [refreshSharedVideos, setRefreshSharedVideos] = useState(false)
     const [addVideoFlag, setAddVideoFlag] = useState(false)
-    const [newVideo, setNewVideo] = useState({"name": "", "location": "", "owner": user.email, "viewers": []})
+    const [newVideo, setNewVideo] = useState({"name": "", "location": "", "owner": "", "viewers": []})
     const [manageAccessFlag, setManageAccessFlag] = useState(false)
     const [newAccessor, setNewAccessor] = useState("")
     const [selectedVideo, setSelectedVideo] = useState({})
@@ -19,6 +21,13 @@ const UserDetail = ({user}) => {
     const [showMediaFlag, setShowMediaFlag] = useState(false)
     const [currentMediaLink, setCurrentMediaLink] = useState("")
     const [mediaLinkDict, setMediaLinkDict] = useState({})
+    const [userObject, setUserObject] = useState({})
+
+    const { user } = useAuth0();
+
+    useEffect(() => {
+        getUserObject();
+      }, [])
 
     if(refreshMyVideos){
         setRefreshMyVideos(false)
@@ -35,11 +44,7 @@ const UserDetail = ({user}) => {
         
         var formData = new FormData()
         formData.append("video", mediaFile.raw)
-        formData.append("name", user.media[user.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
-
-        // for (var [key, value] of formData.entries()) { 
-        //     console.log("TEST", key, value);
-        // }
+        formData.append("name", userObject.media[userObject.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
 
         axios.post(process.env.REACT_APP_URL+"media/post-media",
             formData
@@ -54,13 +59,10 @@ const UserDetail = ({user}) => {
             if(response.status == 200){
                 setRefreshMyVideos(true)
             }
-            // for (var [key, value] of formData.entries()) { 
-            //     console.log("TEST2: ", key, value);
-            // }
         })
     }
 
-    if(!user || user == {}){
+    if(!userObject || userObject == {}){
         return (
             <div>no user selected</div>
         )
@@ -71,13 +73,14 @@ const UserDetail = ({user}) => {
             <Container>
                 <Navbar>
                     <Navbar.Brand>
-                        Video Share - {user.email}
+                        Video Share - {userObject.email}
                     </Navbar.Brand>
                     <Nav>
                         <Nav.Link href="#myvideos" >My Videos</Nav.Link>
                         <Nav.Link href="#shared" >Shared With Me</Nav.Link>
                     </Nav>
                     <Button onClick={() => setAddVideoFlag(true)}>Add Video</Button>
+                    <LogoutButton />
                 </Navbar>
             </Container>
 
@@ -207,6 +210,47 @@ const UserDetail = ({user}) => {
         </div>
     )
 
+    function addNewUser(){
+        console.log("adding new user")
+        axios.post(process.env.REACT_APP_URL + "user/add", {
+                "email": user.email,
+                "media": [],
+                "shared": []
+        },
+        {
+            'headers': {
+                'X-Auth-Token': process.env.REACT_APP_API_KEY
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response)
+            if(response.status == 200){
+                getUserObject()
+            }
+        })
+    }
+
+    function getUserObject() {
+        console.log("getting user object");
+        axios.get(process.env.REACT_APP_URL + "user/" + user.email, {
+            'headers': {
+                'X-Auth-Token': process.env.REACT_APP_API_KEY
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response)
+            if(response.status == 200){
+                if(!response.data){
+                    addNewUser()
+                }else{
+                    setUserObject(response.data[0])
+                    setRefreshMyVideos(true)
+                    setRefreshSharedVideos(true)
+                }
+            }
+        })
+    }
+
     //Called when the view button is clicked 
     //if the presigned url is stored, then that is used
     //otherwise a new presigned url is taken
@@ -260,7 +304,7 @@ const UserDetail = ({user}) => {
 
     function getMediaForUser(){
         console.log("getting media for user")
-        var mediaList = user.media
+        var mediaList = userObject.media
         axios.post(process.env.REACT_APP_URL + "media/list",{
             "media": mediaList
         }, {
@@ -277,8 +321,8 @@ const UserDetail = ({user}) => {
     }
 
     function getSharedMedia(){
-        console.log("getting media for user")
-        var mediaList = user.shared
+        console.log("getting shared media for user")
+        var mediaList = userObject.shared
         axios.post(process.env.REACT_APP_URL + "media/list",{
             "media": mediaList
         }, {
@@ -304,7 +348,7 @@ const UserDetail = ({user}) => {
         }).then(response => {
             console.log(response.status)
             if(response.status == 200){
-                user.media.splice(i, 1)
+                userObject.media.splice(i, 1)
                 setRefreshMyVideos(true)
             }
         })
@@ -370,7 +414,7 @@ const UserDetail = ({user}) => {
         }).then(response => {
             console.log(response.status)
             if(response.status == 200){
-                user.media.push(response.data["InsertedID"])
+                userObject.media.push(response.data["InsertedID"])
                 handleVideoUpload()
             }
         })
