@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'Baloo Thambi 2';
+  src: local('Baloo Thambi 2'), url(./fonts/BalooThambi2/BalooThambi2-Regular.ttf) format('truetype');
+}

@@ -6,19 +6,15 @@ import UserCell from './user-cell.component';
 import AddUser from './add-user.component';
 import LoginButton from './login-button.component';
 import LogoutButton from './logout-button.component';
+import '../css/login-view.css'
 
 const LoginView = () => {
     return ( 
         <div >
-            <Container>
-                <Navbar>
-                    <Navbar.Brand>
-                        Video Share - Admin View
-                    </Navbar.Brand>
-                    <LoginButton />
-                    <LogoutButton />
-                </Navbar>
+            <Container class="container">
+                Video Share
             </Container>
+            <LoginButton />
         </div>
     );
 }
