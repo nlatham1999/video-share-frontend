@@ -5,6 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import LogoutButton from './logout-button.component';
 
+const API_KEY = process.env.REACT_APP_API_KEY || "any-default-local-build_env";
+const URL = process.env.REACT_APP_URL || "any-default-local-build_env";
+
 const UserDetail = () => {
 
     const [myVideos, setMyVideos] = useState([])
@@ -46,12 +49,12 @@ const UserDetail = () => {
         formData.append("video", mediaFile.raw)
         formData.append("name", userObject.media[userObject.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
 
-        axios.post(process.env.REACT_APP_URL+"media/post-media",
+        axios.post(URL+"media/post-media",
             formData
         ,{
             'headers': {
                 'content-type': 'multipart/form-data',
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -212,14 +215,14 @@ const UserDetail = () => {
 
     function addNewUser(){
         console.log("adding new user")
-        axios.post(process.env.REACT_APP_URL + "user/add", {
+        axios.post(URL + "user/add", {
                 "email": user.email,
                 "media": [],
                 "shared": []
         },
         {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -232,9 +235,9 @@ const UserDetail = () => {
 
     function getUserObject() {
         console.log("getting user object");
-        axios.get(process.env.REACT_APP_URL + "user/" + user.email, {
+        axios.get(URL + "user/" + user.email, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -277,9 +280,9 @@ const UserDetail = () => {
     //on success, the presigned url is stored for later usage
     function getMediaLink(location){
         console.log("getting media link")
-        axios.get(process.env.REACT_APP_URL + "media/get-presigned-url/" + location, {
+        axios.get(URL + "media/get-presigned-url/" + location, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -305,11 +308,11 @@ const UserDetail = () => {
     function getMediaForUser(){
         console.log("getting media for user")
         var mediaList = userObject.media
-        axios.post(process.env.REACT_APP_URL + "media/list",{
+        axios.post(URL + "media/list",{
             "media": mediaList
         }, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -323,11 +326,11 @@ const UserDetail = () => {
     function getSharedMedia(){
         console.log("getting shared media for user")
         var mediaList = userObject.shared
-        axios.post(process.env.REACT_APP_URL + "media/list",{
+        axios.post(URL + "media/list",{
             "media": mediaList
         }, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -340,9 +343,9 @@ const UserDetail = () => {
 
     function deleteSingleMedia(id, i){
         console.log("deleting media")
-        axios.delete(process.env.REACT_APP_URL + "media/delete/" + id, {
+        axios.delete(URL + "media/delete/" + id, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -356,12 +359,12 @@ const UserDetail = () => {
 
     function addAccessor(){
         console.log("sharing media")
-        axios.put(process.env.REACT_APP_URL + "media/change-accessor/"+selectedVideo._id,{
+        axios.put(URL + "media/change-accessor/"+selectedVideo._id,{
             "accessor": newAccessor,
             "action": "add"
         }, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -375,12 +378,12 @@ const UserDetail = () => {
 
     function removeAccessor(accessor, i){
         console.log("removing accessor")
-        axios.put(process.env.REACT_APP_URL + "media/change-accessor/"+selectedVideo._id,{
+        axios.put(URL + "media/change-accessor/"+selectedVideo._id,{
             "accessor": accessor,
             "action": "delete"
         }, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
@@ -400,7 +403,7 @@ const UserDetail = () => {
         console.log("adding media for user")
         setAddVideoFlag(false)
         var mediatype = getFileExtension(mediaFile.raw.name)
-        axios.post(process.env.REACT_APP_URL + "media/add",{
+        axios.post(URL + "media/add",{
             "name": newVideo.name,
             "owner": user.email,
             "location": "",
@@ -408,7 +411,7 @@ const UserDetail = () => {
             "viewers": []
         }, {
             'headers': {
-                'X-Auth-Token': process.env.REACT_APP_API_KEY
+                'X-Auth-Token': API_KEY
             },
             responseType: 'json',
         }).then(response => {
