@@ -71,7 +71,7 @@ body {
 }
 
 
-@keyframes slidein2 {
+/* @keyframes slidein2 {
     from {
         margin-left: -80%; 
         width: 300%;
@@ -81,4 +81,4 @@ body {
         margin-left: calc(auto);
         width: 100%;
     }
-}
+} */
