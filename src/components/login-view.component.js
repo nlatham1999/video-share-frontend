@@ -11,10 +11,16 @@ import '../css/login-view.css'
 const LoginView = () => {
     return ( 
         <div >
-            <Container class="container">
-                Video Share
+            <Container className="container3">
+                <LoginButton text={"login"}/>
+                <LoginButton text={"sign up"}/>
             </Container>
-            <LoginButton />
+            <Container className="container1">
+                video share
+            </Container>
+            <Container className="container2">
+                upload, share, and view media with ease
+            </Container>
         </div>
     );
 }

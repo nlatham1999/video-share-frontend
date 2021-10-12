@@ -4,8 +4,81 @@ body {
     font-weight: 600;
 }
 
-.container {
+.container1 {
     text-align: center;
+    /* margin-left: 47%; */
     font-size: xx-large;
-    padding-top: 4vh;
+    padding-top: 16vh;
+    overflow: hidden;
+    
+    /* animation-duration: 3s;
+    animation-name: slidein; */
+}
+
+.container2 {
+    text-align: center;
+    font-size: x-large;
+    padding-top: 2vh;
+    padding-right: 12vw;
+    padding-left: 12vw;
+    /* overflow: hidden; */
+
+    /* animation-duration: 3s;
+    animation-name: slidein; */
+}
+
+.container3 {
+    text-align: right;
+    margin-right: 0%;
+    padding-right: 0%;
+    /* animation-duration: 2s;
+    animation-name: slidein2; */
+}
+
+.testst {
+    -webkit-animation: cycle 4s infinite; /* Safari 4+ */
+    -moz-animation: cycle 4s infinite; /* Fx 5+ */
+    -o-animation: cycle 4s infinite; /* Opera 12+ */
+    animation: cycle 4s infinite; /* IE 10+, Fx 29+ */
+}
+
+
+@keyframes cycle {
+  0% {
+    content: "Corgi";
+  }
+  33% {
+    content: "Shih Tzu";
+  }
+  66% {
+    content: "Pug";
+  }
+  100% {
+    content: "Dachshund";
+  }
+}
+
+@keyframes slidein {
+    from {
+        margin-left: -60%; 
+        width: 300%;
+    }
+
+    to {
+        margin-left: 4%;
+        width: 100%;
+    }
+}
+
+
+@keyframes slidein2 {
+    from {
+        margin-left: -80%; 
+        width: 300%;
+    }
+
+    to {
+        margin-left: calc(auto);
+        width: 100%;
+    }
 }
