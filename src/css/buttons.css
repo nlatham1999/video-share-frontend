@@ -6,4 +6,10 @@
     font-size: 130%; 
     border-width: 3px;
     font-weight: 600;
+    background-color: rgb(105, 137, 152);
+}
+
+.button1:hover {
+    background-color: rgb(81, 105, 117);
+    border-color: white;
 }
