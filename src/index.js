@@ -14,7 +14,9 @@ ReactDOM.render(
     <Auth0Provider
       domain={AUTH0_DOMAIN}
       clientId={CLIENT_ID}
-      redirectUri={window.location.origin }
+      redirectUri={window.location.origin}
+      audience="https://videoshare/api"
+      scope="update:user"
       
     >
       {console.log(window.location.origin)}

@@ -26,7 +26,7 @@ const UserDetail = () => {
     const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [userObject, setUserObject] = useState({})
 
-    const { user } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         getUserObject();
@@ -40,29 +40,6 @@ const UserDetail = () => {
     if(refreshSharedVideos){
         setRefreshSharedVideos(false)
         getSharedMedia()
-    }
-
-    const handleVideoUpload = async e => {
-        console.log("uploading media file")
-        
-        var formData = new FormData()
-        formData.append("video", mediaFile.raw)
-        formData.append("name", userObject.media[userObject.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
-
-        axios.post(API_URL+"media/post-media",
-            formData
-        ,{
-            'headers': {
-                'content-type': 'multipart/form-data',
-                'X-Auth-Token': API_KEY
-            },
-            responseType: 'json',
-        }).then(response => {
-            console.log(response.status)
-            if(response.status == 200){
-                setRefreshMyVideos(true)
-            }
-        })
     }
 
     if(!userObject || userObject == {}){
@@ -136,7 +113,7 @@ const UserDetail = () => {
                                         Owner: {video.owner}
                                     </Col>
                                     <Col>
-                                        <Button >View</Button>
+                                        <Button onClick={()=> onViewButtonClicked(video.location)}>View</Button>
                                     </Col>
                                 </Row>
                             </div>
@@ -213,16 +190,48 @@ const UserDetail = () => {
         </div>
     )
 
-    function addNewUser(){
+    async function handleVideoUpload(e){
+        console.log("uploading media file")
+        
+        var formData = new FormData()
+        formData.append("video", mediaFile.raw)
+        formData.append("name", userObject.media[userObject.media.length-1] + "." + getFileExtension(mediaFile.raw.name))
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
+        axios.post(API_URL+"media/post-media",formData,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data',
+            },
+            responseType: 'json',
+        }).then(response => {
+            console.log(response.status)
+            if(response.status == 200){
+                setRefreshMyVideos(true)
+            }
+        })
+    }
+
+    async function addNewUser(){
         console.log("adding new user")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.post(API_URL + "user/add", {
                 "email": user.email,
                 "media": [],
                 "shared": []
         },
         {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -233,15 +242,21 @@ const UserDetail = () => {
         })
     }
 
-    function getUserObject() {
+    async function getUserObject() {
         console.log("getting user object");
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.get(API_URL + "user/" + user.email, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response)
+            console.log(response.status)
             if(response.status == 200){
                 if(!response.data){
                     addNewUser()
@@ -278,11 +293,17 @@ const UserDetail = () => {
 
     //gets a presigned url for a media object
     //on success, the presigned url is stored for later usage
-    function getMediaLink(location){
+    async function getMediaLink(location){
         console.log("getting media link")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.get(API_URL + "media/get-presigned-url/" + location, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -305,14 +326,20 @@ const UserDetail = () => {
         setRefreshMyVideos(true)
     }
 
-    function getMediaForUser(){
+    async function getMediaForUser(){
         console.log("getting media for user")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         var mediaList = userObject.media
         axios.post(API_URL + "media/list",{
             "media": mediaList
         }, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -323,14 +350,20 @@ const UserDetail = () => {
         })
     }
 
-    function getSharedMedia(){
+    async function getSharedMedia(){
         console.log("getting shared media for user")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         var mediaList = userObject.shared
         axios.post(API_URL + "media/list",{
             "media": mediaList
         }, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -341,11 +374,17 @@ const UserDetail = () => {
         })
     }
 
-    function deleteSingleMedia(id, i){
+    async function deleteSingleMedia(id, i){
         console.log("deleting media")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.delete(API_URL + "media/delete/" + id, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -357,14 +396,20 @@ const UserDetail = () => {
         })
     }
 
-    function addAccessor(){
+    async function addAccessor(){
         console.log("sharing media")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.put(API_URL + "media/change-accessor/"+selectedVideo._id,{
             "accessor": newAccessor,
             "action": "add"
         }, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -376,14 +421,20 @@ const UserDetail = () => {
         })
     }
 
-    function removeAccessor(accessor, i){
+    async function removeAccessor(accessor, i){
         console.log("removing accessor")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         axios.put(API_URL + "media/change-accessor/"+selectedVideo._id,{
             "accessor": accessor,
             "action": "delete"
         }, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
@@ -395,12 +446,14 @@ const UserDetail = () => {
         })
     }
 
-    function updateOwnersForMedia(){
-
-    }
-
-    function addMedia(){
+    async function addMedia(){
         console.log("adding media for user")
+
+        const token = await getAccessTokenSilently({
+            audience: "https://videoshare/api",
+            scope: "update:user",
+        });
+
         setAddVideoFlag(false)
         var mediatype = getFileExtension(mediaFile.raw.name)
         axios.post(API_URL + "media/add",{
@@ -410,8 +463,8 @@ const UserDetail = () => {
             "mediatype": mediatype,
             "viewers": []
         }, {
-            'headers': {
-                'X-Auth-Token': API_KEY
+            headers: {
+                Authorization: `Bearer ${token}`,
             },
             responseType: 'json',
         }).then(response => {
