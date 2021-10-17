@@ -4,8 +4,12 @@ import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form } from "rea
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import LogoutButton from './logout-button.component';
+import '../css/buttons.css'
+import '../css/user-detail.css'
+import '../css/card.css'
+import UserMedia from './user-media.component';
+import SharedMedia from './shared-media.components';
 
-const API_KEY = process.env.REACT_APP_API_KEY || "any-default-local-build_env";
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
 const UserDetail = () => {
@@ -25,6 +29,7 @@ const UserDetail = () => {
     const [currentMediaLink, setCurrentMediaLink] = useState("")
     const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [userObject, setUserObject] = useState({})
+    const [userMediaShown, setUserMediaShown] = useState(false)
 
     const { user, getAccessTokenSilently } = useAuth0();
 
@@ -50,83 +55,32 @@ const UserDetail = () => {
     return (
         <div>
             {/* top navbar  */}
-            <Container>
-                <Navbar>
-                    <Navbar.Brand>
-                        Video Share - {userObject.email}
-                    </Navbar.Brand>
-                    <Nav>
-                        <Nav.Link href="#myvideos" >My Videos</Nav.Link>
-                        <Nav.Link href="#shared" >Shared With Me</Nav.Link>
-                    </Nav>
-                    <Button onClick={() => setAddVideoFlag(true)}>Add Video</Button>
-                    <LogoutButton />
+            <Container style={{marginTop: "2vh"}}>
+                {userObject.email}
+                <Navbar className="navigationBar">
+                        <Col xs="auto">
+                            <Nav>
+                                <Nav.Link className="navigationText" style={{paddingLeft: 0}} href="#myvideos" onClick={() => setUserMediaShown(true)}>my media</Nav.Link>
+                                <Nav.Link className="navigationText" href="#shared" onClick={() => setUserMediaShown(false)}>shared with me</Nav.Link>
+                            </Nav>
+                        </Col>
+                        <Col className="buttonGroup">
+                            <Button variant="outline-dark" className="navigationButton" onClick={() => setAddVideoFlag(true)}>add media</Button>
+                            <LogoutButton />
+                        </Col>
                 </Navbar>
             </Container>
 
-            {/* displays the media */}
-            <Container id="myvideos" style={{"paddingBottom": "1%"}}>
-                <Card>
-                    <Card.Header>
-                        My Videos
-                    </Card.Header>
-                    <Card.Body>
-                        {myVideos && myVideos[0] &&
-                        myVideos.map((video, i) => (
-                            <div style={{"paddingBottom": "1%"}}>
-                                <Row>
-                                    <Col>
-                                        {video.name}{' '}
-                                    </Col>
-                                    <Col>
-                                        Shared With: {video.viewers && video.viewers.length}{' '}
-                                    </Col>
-                                    <Col style={{}}>
-                                        <Button onClick={()=> onViewButtonClicked(video.location)}>View</Button> {' '}
-                                        <Button onClick={() => {setSelectedVideo(video); setManageAccessFlag(true)}}>Share</Button>{' '}
-                                        <Button variant="danger" onClick={() => deleteSingleMedia(video._id, i)}>Delete</Button>
-                                    </Col>
-                                </Row>   
-                            
-                            </div>
-                            ))
-                        }
-                    </Card.Body>
-                </Card>
-            </Container>
-
-            {/* displays shared media */}
-            <Container id="shared">
-                <Card>
-                    <Card.Header>
-                        Shared With Me
-                    </Card.Header>
-                    <Card.Body>
-                        {sharedWithMe &&
-                        sharedWithMe.map((video, i) => (
-                            <div style={{"paddingBottom": "1%"}}>
-                                <Row>
-                                    <Col>
-                                        {video.name}
-                                    </Col>
-                                    <Col>
-                                        Owner: {video.owner}
-                                    </Col>
-                                    <Col>
-                                        <Button onClick={()=> onViewButtonClicked(video.location)}>View</Button>
-                                    </Col>
-                                </Row>
-                            </div>
-                        ))
-                        }
-                    </Card.Body>
-                </Card>
-            </Container>    
-
+            {userMediaShown &&
+                <UserMedia myVideos={myVideos} onViewButtonClicked={onViewButtonClicked} setSelectedVideo={setSelectedVideo} setManageAccessFlag={setManageAccessFlag} deleteSingleMedia={deleteSingleMedia} />
+            }
+            {!userMediaShown &&
+                <SharedMedia sharedWithMe={sharedWithMe} onViewButtonClicked={onViewButtonClicked} />
+            }
             {/* add media */}
             <Modal show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Video</Modal.Title>
+                    <Modal.Title>add media</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
@@ -137,21 +91,21 @@ const UserDetail = () => {
                     <input type="file" onChange={onFileChange}/>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={() => addMedia()}>Add</Button>
-                    <Button onClick={() => setAddVideoFlag(false)}>Cancel</Button>
+                    <Button onClick={() => addMedia()}>add</Button>
+                    <Button onClick={() => setAddVideoFlag(false)}>cancel</Button>
                 </Modal.Footer>
             </Modal>
 
             {/* manage access */}
             <Modal show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>\
                 <Modal.Header closeButton>
-                    <Modal.Title>Manage Access</Modal.Title>
+                    <Modal.Title>manage access</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label >New Accessor</Form.Label>
+                            <Form.Label >new accessor</Form.Label>
                             <Form.Control onChange={(event) => {setNewAccessor(event.target.value)}}/>
                         </Form.Group>
                         <Button onClick={() => addAccessor()}>Add</Button>

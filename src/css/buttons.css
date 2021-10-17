@@ -9,7 +9,42 @@
     background-color: rgb(105, 137, 152);
 }
 
-.button1:hover {
-    background-color: rgb(81, 105, 117);
-    border-color: white;
+.navigationButton {
+    border-radius: 25%;
+    padding: .6vw;
+    margin-right: .8vw;  
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(105, 137, 152);
+}
+
+.mediaCellButton {
+    border-radius: 25%;
+    padding: .6vw;
+    margin-right: .8vw;  
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(80, 104, 116);
+}
+
+.mediaCellButtonVariant2 {
+    border-radius: 25%;
+    padding: .6vw;
+    margin-right: .8vw;  
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(98, 127, 141);
+}
+
+.mediaCellButtonDanger {
+    border-radius: 25%;
+    padding: .6vw;
+    margin-right: .8vw;  
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(62, 79, 87);
 }

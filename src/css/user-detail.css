@@ -1,0 +1,45 @@
+.container1 {
+    margin-top: 1vh;
+}
+
+.navigationBar {
+    text-align: center;
+    /* margin-left: 47%; */
+    font-size: large;
+    /* padding-top: 1vh; */
+    margin: 0;
+    
+    /* animation-duration: 3s;
+    animation-name: slidein; */
+}
+
+.navigationText {
+    /* text-align: left; */
+    padding-left: 0px;
+}
+
+.navigationText:hover {
+    color: white;
+}
+
+.buttonGroup {
+    text-align: right;
+}
+
+.mediaCellText {
+    text-align: left;
+    padding-top: 1vh;
+    padding-right: 0;
+}
+
+.gridOnOneLine {
+    display: grid;
+    grid-auto-flow: column;
+}
+
+.mediaPanel {
+    overflow-y: scroll;
+    min-height: 40vh;
+    max-height: 40vh;
+}
+
