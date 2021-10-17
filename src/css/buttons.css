@@ -57,3 +57,12 @@
     font-weight: 600;
     background-color: rgb(80, 104, 116);
 }
+
+.modalButton2 {
+    border-radius: 25%;
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(80, 104, 116);
+    margin-right: 1vw;
+}

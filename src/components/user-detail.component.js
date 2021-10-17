@@ -10,6 +10,7 @@ import '../css/card.css'
 import '../css/modal.css'
 import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
+import QRCode from "qrcode.react";
 
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
@@ -31,6 +32,9 @@ const UserDetail = () => {
     const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [userObject, setUserObject] = useState({})
     const [userMediaShown, setUserMediaShown] = useState(true)
+
+    const [useQrCode, setUseQrCode] = useState(false);
+    const [qrCode, setQrCode] = useState("")
 
     const { user, getAccessTokenSilently } = useAuth0();
 
@@ -135,16 +139,30 @@ const UserDetail = () => {
             {/* show media */}
             <Modal className="modalOverall" show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
                 <Modal.Header className="modalHeader" closeButton>
+                    <Button className="modalButton2" variant="outline-dark" onClick={() => setUseQrCode(false)}>image</Button>
+                    <Button className="modalButton2" variant="outline-dark" onClick={()=>getQrCode()}>QR code</Button>
                 </Modal.Header>
 
                 <Modal.Body >
-                {/* <img src="https://tutorialsplane.com/wp-content/uploads/2016/07/fruits-863072_960_720.jpg" style="width:100%;height:100%;"/> */}
-                    <img src={currentMediaLink} alt="" className="img-fluid" ></img>
+                    {useQrCode &&
+                        <QRCode value={currentMediaLink} />
+                    }
+                    {!useQrCode &&
+                        <img src={currentMediaLink} alt="" className="img-fluid" ></img>
+                    }
                 </Modal.Body>
             </Modal>
 
         </div>
     )
+
+    async function getQrCode(){
+        await setQrCode(`http://api.qrserver.com/v1/create-qr-code/?data=${currentMediaLink}!&size=${"400"}x${"400"}&bgcolor=${"ffffff"}`)
+
+        console.log(qrCode)
+        setUseQrCode(true)
+
+    }
 
     async function handleVideoUpload(e){
         console.log("uploading media file")
