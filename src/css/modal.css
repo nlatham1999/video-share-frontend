@@ -1,0 +1,50 @@
+
+.modalOverall .modal-content {
+    background-color: rgb(118, 146, 160);
+    border-width: 3px;
+    border-color: rgb(34, 38, 43);
+}
+
+.modalHeader {
+    background-color: rgb(95, 123, 137);
+    border-bottom-width: 3px;
+    border-color: rgb(34, 38, 43);
+}
+
+.modalFooter {
+    background-color: rgb(95, 123, 137);
+    border-top-width: 3px;
+    border-color: rgb(34, 38, 43);
+}
+
+.textBox {
+    border-width: 3px;
+    border-color: rgb(34, 38, 43);
+    margin-bottom: 1vh;
+}
+
+.modalList {
+    background-color: rgb(118, 146, 160);
+    border-width: 0;
+    margin-bottom: .5vh;
+}
+
+.modalBody {
+    max-height: 35vh;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.modalBody::-webkit-scrollbar {
+    display: none;
+  }
+
+/* .img {
+    object-fit: scale-down;
+} */
+
+.modalPicture {
+    max-height: 40vh;
+}

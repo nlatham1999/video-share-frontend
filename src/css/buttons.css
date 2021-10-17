@@ -49,3 +49,11 @@
     font-weight: 600;
     background-color: rgb(62, 79, 87);
 }
+
+.modalButton {
+    border-radius: 25%;
+    font-size: medium; 
+    border-width: 3px;
+    font-weight: 600;
+    background-color: rgb(80, 104, 116);
+}

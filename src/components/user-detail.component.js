@@ -7,6 +7,7 @@ import LogoutButton from './logout-button.component';
 import '../css/buttons.css'
 import '../css/user-detail.css'
 import '../css/card.css'
+import '../css/modal.css'
 import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
 
@@ -78,27 +79,27 @@ const UserDetail = () => {
                 <SharedMedia sharedWithMe={sharedWithMe} onViewButtonClicked={onViewButtonClicked} />
             }
             {/* add media */}
-            <Modal show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
-                <Modal.Header closeButton>
+            <Modal className="modalOverall" show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
+                <Modal.Header className="modalHeader" closeButton>
                     <Modal.Title>add media</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
                     <Form.Group>
                         <Form.Label >name</Form.Label>
-                        <Form.Control onChange={(event) => {newVideo.name = event.target.value}}/>
+                        <Form.Control className="textBox" onChange={(event) => {newVideo.name = event.target.value}}/>
                     </Form.Group>
                     <input type="file" onChange={onFileChange}/>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={() => addMedia()}>add</Button>
-                    <Button onClick={() => setAddVideoFlag(false)}>cancel</Button>
+                <Modal.Footer className="modalFooter">
+                    <Button className="modalButton" variant="outline-dark" onClick={() => addMedia()}>add</Button>
+                    <Button className="modalButton" variant="outline-dark" onClick={() => setAddVideoFlag(false)}>cancel</Button>
                 </Modal.Footer>
             </Modal>
 
             {/* manage access */}
-            <Modal show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>\
-                <Modal.Header closeButton>
+            <Modal className="modalOverall" show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>
+                <Modal.Header className="modalHeader" closeButton>
                     <Modal.Title>manage access</Modal.Title>
                 </Modal.Header>
 
@@ -106,38 +107,39 @@ const UserDetail = () => {
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Label >new accessor</Form.Label>
-                            <Form.Control onChange={(event) => {setNewAccessor(event.target.value)}}/>
+                            <Form.Control className="textBox" onChange={(event) => {setNewAccessor(event.target.value)}}/>
                         </Form.Group>
-                        <Button onClick={() => addAccessor()}>Add</Button>
+                        <Button className="modalButton" variant="outline-dark" onClick={() => addAccessor()}>Add</Button>
                     </Form>
                 </Modal.Body>
-                <Modal.Body>
+                <Modal.Body className="modalBody">
                     {selectedVideo && selectedVideo.viewers && selectedVideo.viewers.map((viewer, i) => (
-                            <Card>
+                            <Card className="modalList">
                                 <Row>
                                     <Col>
                                         {viewer}
                                     </Col>
-                                    <Col>
-                                        <Button variant="danger" onClick={() => removeAccessor(viewer, i)}>remove</Button>
+                                    <Col >
+                                        <Button className="modalButton" variant="outline-dark" variant="outline-dark" onClick={() => removeAccessor(viewer, i)}>remove</Button>
                                     </Col>
                                 </Row>
                             </Card>
                         ))
                     }
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={() => closeAccessManagerPopup()}>Close</Button>
+                <Modal.Footer className="modalFooter">
+                    <Button className="modalButton" variant="outline-dark" onClick={() => closeAccessManagerPopup()}>Close</Button>
                 </Modal.Footer>
             </Modal>
             
             {/* show media */}
-            <Modal show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
-                <Modal.Header closeButton>
+            <Modal className="modalOverall" show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
+                <Modal.Header className="modalHeader" closeButton>
                 </Modal.Header>
 
-                <Modal.Body>
-                    <img src={currentMediaLink} alt=""></img>
+                <Modal.Body >
+                {/* <img src="https://tutorialsplane.com/wp-content/uploads/2016/07/fruits-863072_960_720.jpg" style="width:100%;height:100%;"/> */}
+                    <img src={currentMediaLink} alt="" className="img-fluid" ></img>
                 </Modal.Body>
             </Modal>
 
