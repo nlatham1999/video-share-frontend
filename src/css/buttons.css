@@ -17,6 +17,7 @@
     border-width: 3px;
     font-weight: 600;
     background-color: rgb(105, 137, 152);
+    text-align: right;
 }
 
 .mediaCellButton {

@@ -29,7 +29,7 @@ const UserDetail = () => {
     const [currentMediaLink, setCurrentMediaLink] = useState("")
     const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [userObject, setUserObject] = useState({})
-    const [userMediaShown, setUserMediaShown] = useState(false)
+    const [userMediaShown, setUserMediaShown] = useState(true)
 
     const { user, getAccessTokenSilently } = useAuth0();
 
@@ -56,6 +56,7 @@ const UserDetail = () => {
         <div>
             {/* top navbar  */}
             <Container style={{marginTop: "2vh"}}>
+                <LogoutButton />{' '}
                 {userObject.email}
                 <Navbar className="navigationBar">
                         <Col xs="auto">
@@ -66,7 +67,6 @@ const UserDetail = () => {
                         </Col>
                         <Col className="buttonGroup">
                             <Button variant="outline-dark" className="navigationButton" onClick={() => setAddVideoFlag(true)}>add media</Button>
-                            <LogoutButton />
                         </Col>
                 </Navbar>
             </Container>
