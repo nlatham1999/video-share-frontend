@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form } from "react-bootstrap";
+import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form, Alert } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import LogoutButton from './logout-button.component';
@@ -32,6 +32,9 @@ const UserDetail = () => {
     const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [userObject, setUserObject] = useState({})
     const [userMediaShown, setUserMediaShown] = useState(true)
+
+    const [modalAlertFlag, setModalAlertFlag] = useState(false)
+    const [modalAlertMessage, setModalAlertMessage] = useState("")
 
     const [useQrCode, setUseQrCode] = useState(false);
     const [qrCode, setQrCode] = useState("")
@@ -86,6 +89,11 @@ const UserDetail = () => {
             <Modal className="modalOverall" show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
                 <Modal.Header className="modalHeader" closeButton>
                     <Modal.Title>add media</Modal.Title>
+                    {modalAlertFlag && 
+                        <Alert variant="danger" onClose={() => setModalAlertFlag(false)} dismissible>
+                            {modalAlertMessage}
+                        </Alert>
+                    }
                 </Modal.Header>
 
                 <Modal.Body>
@@ -105,6 +113,11 @@ const UserDetail = () => {
             <Modal className="modalOverall" show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>
                 <Modal.Header className="modalHeader" closeButton>
                     <Modal.Title>manage access</Modal.Title>
+                    {modalAlertFlag && 
+                        <Alert variant="danger" onClose={() => setModalAlertFlag(false)} dismissible>
+                            {modalAlertMessage}
+                        </Alert>
+                    }
                 </Modal.Header>
 
                 <Modal.Body>
@@ -185,6 +198,7 @@ const UserDetail = () => {
         }).then(response => {
             console.log(response.status)
             if(response.status == 200){
+                setMediaFile({preview: "", raw: "" })
                 setRefreshMyVideos(true)
             }
         })
@@ -373,6 +387,12 @@ const UserDetail = () => {
     async function addAccessor(){
         console.log("sharing media")
 
+        if(newAccessor == user.email){
+            setModalAlertFlag(true)
+            setModalAlertMessage("cannot be you own email")
+            return;
+        }
+
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
             scope: "update:user",
@@ -391,6 +411,13 @@ const UserDetail = () => {
             if(response.status == 200){
                 selectedVideo.viewers.push(newAccessor)
                 setRefresh(!refresh)
+            }
+            else if(response.status == 208){
+                setModalAlertFlag(true)
+                setModalAlertMessage("email already added")
+            }else if(response.status == 204){
+                setModalAlertFlag(true)
+                setModalAlertMessage("user does not exist")
             }
         })
     }
@@ -423,13 +450,26 @@ const UserDetail = () => {
     async function addMedia(){
         console.log("adding media for user")
 
+        var mediatype = "";
+        try{
+            mediatype = getFileExtension(mediaFile.raw.name)
+        }catch {
+            setModalAlertFlag(true)
+            setModalAlertMessage("please include media")
+            return 
+        }
+
+        if(newVideo.name == ""){
+            setModalAlertFlag(true)
+            setModalAlertMessage("please include media name")
+            return 
+        }
+   
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
             scope: "update:user",
         });
 
-        setAddVideoFlag(false)
-        var mediatype = getFileExtension(mediaFile.raw.name)
         axios.post(API_URL + "media/add",{
             "name": newVideo.name,
             "owner": user.email,
@@ -444,6 +484,8 @@ const UserDetail = () => {
         }).then(response => {
             console.log(response.status)
             if(response.status == 200){
+                setAddVideoFlag(false)
+                newVideo.name = ""
                 userObject.media.push(response.data["InsertedID"])
                 handleVideoUpload()
             }
