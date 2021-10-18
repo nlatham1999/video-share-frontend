@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form, Alert } from "react-bootstrap";
+import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form, Alert, Spinner } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import LogoutButton from './logout-button.component';
@@ -11,6 +11,7 @@ import '../css/modal.css'
 import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
 import QRCode from "qrcode.react";
+import NavigationBar from './navigation-bar.component';
 
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
@@ -35,6 +36,8 @@ const UserDetail = () => {
 
     const [modalAlertFlag, setModalAlertFlag] = useState(false)
     const [modalAlertMessage, setModalAlertMessage] = useState("")
+
+    const [loading, setLoading] = useState(false)
 
     const [useQrCode, setUseQrCode] = useState(false);
     const [qrCode, setQrCode] = useState("")
@@ -62,22 +65,15 @@ const UserDetail = () => {
     }
     return (
         <div>
-            {/* top navbar  */}
-            <Container style={{marginTop: "2vh"}}>
-                <LogoutButton />{' '}
-                {userObject.email}
-                <Navbar className="navigationBar">
-                        <Col xs="auto">
-                            <Nav>
-                                <Nav.Link className="navigationText" style={{paddingLeft: 0}} href="#myvideos" onClick={() => setUserMediaShown(true)}>my media</Nav.Link>
-                                <Nav.Link className="navigationText" href="#shared" onClick={() => setUserMediaShown(false)}>shared with me</Nav.Link>
-                            </Nav>
-                        </Col>
-                        <Col className="buttonGroup">
-                            <Button variant="outline-dark" className="navigationButton" onClick={() => setAddVideoFlag(true)}>add media</Button>
-                        </Col>
-                </Navbar>
-            </Container>
+        {loading &&
+            <div className="overlay">
+                {console.log("test")}
+                <Spinner animation="border" role="status" className="spinnerStyle">
+                </Spinner>
+            </div>
+        }
+        <div>
+            <NavigationBar userObject={userObject} setUserMediaShown={setUserMediaShown} setAddVideoFlag={setAddVideoFlag}/>
 
             {userMediaShown &&
                 <UserMedia myVideos={myVideos} onViewButtonClicked={onViewButtonClicked} setSelectedVideo={setSelectedVideo} setManageAccessFlag={setManageAccessFlag} deleteSingleMedia={deleteSingleMedia} />
@@ -165,19 +161,22 @@ const UserDetail = () => {
                     }
                 </Modal.Body>
             </Modal>
-
+        </div>
         </div>
     )
 
     async function getQrCode(){
+        setLoading(true)
         await setQrCode(`http://api.qrserver.com/v1/create-qr-code/?data=${currentMediaLink}!&size=${"400"}x${"400"}&bgcolor=${"ffffff"}`)
 
+        setLoading(false)
         console.log(qrCode)
         setUseQrCode(true)
 
     }
 
     async function handleVideoUpload(e){
+        setLoading(true)
         console.log("uploading media file")
         
         var formData = new FormData()
@@ -202,9 +201,11 @@ const UserDetail = () => {
                 setRefreshMyVideos(true)
             }
         })
+        setLoading(false)
     }
 
     async function addNewUser(){
+        setLoading(true)
         console.log("adding new user")
 
         const token = await getAccessTokenSilently({
@@ -228,9 +229,11 @@ const UserDetail = () => {
                 getUserObject()
             }
         })
+        setLoading(false)
     }
 
     async function getUserObject() {
+        setLoading(true)
         console.log("getting user object");
 
         const token = await getAccessTokenSilently({
@@ -255,6 +258,7 @@ const UserDetail = () => {
                 }
             }
         })
+        setLoading(false)
     }
 
     //Called when the view button is clicked 
@@ -282,6 +286,7 @@ const UserDetail = () => {
     //gets a presigned url for a media object
     //on success, the presigned url is stored for later usage
     async function getMediaLink(location){
+        setLoading(true)
         console.log("getting media link")
 
         const token = await getAccessTokenSilently({
@@ -298,10 +303,12 @@ const UserDetail = () => {
             console.log(response.status)
             if(response.status == 200){
                 mediaLinkDict[location] = response.data
+                console.log(response.data)
                 setCurrentMediaLink(response.data)
                 setShowMediaFlag(true)
             }
         })
+        setLoading(false)
     }
 
     function getFileExtension(fileName){
@@ -315,6 +322,7 @@ const UserDetail = () => {
     }
 
     async function getMediaForUser(){
+        setLoading(true)
         console.log("getting media for user")
 
         const token = await getAccessTokenSilently({
@@ -336,9 +344,11 @@ const UserDetail = () => {
                 setMyVideos(response.data)
             }
         })
+        setLoading(false)
     }
 
     async function getSharedMedia(){
+        setLoading(true)
         console.log("getting shared media for user")
 
         const token = await getAccessTokenSilently({
@@ -360,9 +370,11 @@ const UserDetail = () => {
                 setSharedWithMe(response.data)
             }
         })
+        setLoading(false)
     }
 
     async function deleteSingleMedia(id, i){
+        setLoading(true)
         console.log("deleting media")
 
         const token = await getAccessTokenSilently({
@@ -382,9 +394,11 @@ const UserDetail = () => {
                 setRefreshMyVideos(true)
             }
         })
+        setLoading(false)
     }
 
     async function addAccessor(){
+        setLoading(true)
         console.log("sharing media")
 
         if(newAccessor == user.email){
@@ -420,9 +434,11 @@ const UserDetail = () => {
                 setModalAlertMessage("user does not exist")
             }
         })
+        setLoading(false)
     }
 
     async function removeAccessor(accessor, i){
+        setLoading(true)
         console.log("removing accessor")
 
         const token = await getAccessTokenSilently({
@@ -445,9 +461,11 @@ const UserDetail = () => {
                 setRefresh(!refresh)
             }
         })
+        setLoading(false)
     }
 
     async function addMedia(){
+        setLoading(true)
         console.log("adding media for user")
 
         var mediatype = "";
@@ -490,6 +508,7 @@ const UserDetail = () => {
                 handleVideoUpload()
             }
         })
+        setLoading(false)
     }
 
 }
