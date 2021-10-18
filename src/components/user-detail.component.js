@@ -148,8 +148,9 @@ const UserDetail = () => {
             {/* show media */}
             <Modal className="modalOverall" show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
                 <Modal.Header className="modalHeader" closeButton>
-                    <Button className="modalButton2" variant="outline-dark" onClick={() => setUseQrCode(false)}>image</Button>
+                    <Button className="modalButton2" variant="outline-dark" onClick={() => setUseQrCode(false)}>media</Button>
                     <Button className="modalButton2" variant="outline-dark" onClick={()=>getQrCode()}>QR code</Button>
+                    <a href={currentMediaLink} style={{color: "black"}} target="_blank">external link</a>
                 </Modal.Header>
 
                 <Modal.Body >
@@ -157,7 +158,7 @@ const UserDetail = () => {
                         <QRCode value={currentMediaLink} />
                     }
                     {!useQrCode &&
-                        <img src={currentMediaLink} alt="" className="img-fluid" ></img>
+                        <img src={currentMediaLink} alt="could not display. use external link" className="img-fluid" ></img>
                     }
                 </Modal.Body>
             </Modal>
