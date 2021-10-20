@@ -12,6 +12,7 @@ import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
 import QRCode from "qrcode.react";
 import NavigationBar from './navigation-bar.component';
+import AddMedia from './add-media.component';
 
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
@@ -82,28 +83,7 @@ const UserDetail = () => {
                 <SharedMedia sharedWithMe={sharedWithMe} onViewButtonClicked={onViewButtonClicked} />
             }
             {/* add media */}
-            <Modal className="modalOverall" show={addVideoFlag} onHide={() => setAddVideoFlag(false)} centered>
-                <Modal.Header className="modalHeader" closeButton>
-                    <Modal.Title>add media</Modal.Title>
-                    {modalAlertFlag && 
-                        <Alert variant="danger" onClose={() => setModalAlertFlag(false)} dismissible>
-                            {modalAlertMessage}
-                        </Alert>
-                    }
-                </Modal.Header>
-
-                <Modal.Body>
-                    <Form.Group>
-                        <Form.Label >name</Form.Label>
-                        <Form.Control className="textBox" onChange={(event) => {newVideo.name = event.target.value}}/>
-                    </Form.Group>
-                    <input type="file" onChange={onFileChange}/>
-                </Modal.Body>
-                <Modal.Footer className="modalFooter">
-                    <Button className="modalButton" variant="outline-dark" onClick={() => addMedia()}>add</Button>
-                    <Button className="modalButton" variant="outline-dark" onClick={() => setAddVideoFlag(false)}>cancel</Button>
-                </Modal.Footer>
-            </Modal>
+            <AddMedia addVideoFlag={addVideoFlag} setAddVideoFlag={setAddVideoFlag} modalAlertFlag={modalAlertFlag} setModalAlertFlag={setModalAlertFlag} modalAlertMessage={modalAlertMessage} addMedia={addMedia} newVideo={newVideo} onFileChange={onFileChange}/>
 
             {/* manage access */}
             <Modal className="modalOverall" show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>
@@ -161,7 +141,7 @@ const UserDetail = () => {
                         <img src={currentMediaLink} alt="could not display. use external link" className="img-fluid" ></img>
                     }
                 </Modal.Body>
-            </Modal>
+            </Modal> 
         </div>
         </div>
     )
