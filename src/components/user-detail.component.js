@@ -1,24 +1,34 @@
+//#region imports
+
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Container, Card, Button, Row, Col, Navbar, Nav, Modal, Form, Alert, Spinner } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import LogoutButton from './logout-button.component';
+
+import { Spinner } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import '../css/buttons.css'
 import '../css/user-detail.css'
 import '../css/card.css'
 import '../css/modal.css'
+
 import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
 import NavigationBar from './navigation-bar.component';
 import AddMedia from './add-media.component';
 import ShareModal from './share-module.component';
 import ShowMedia from './show-media.component';
+import LogoutButton from './logout-button.component';
+
+//#endregion
+
+
 
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
 const UserDetail = () => {
     
+    //#region variables
     //Auth0 Variables
     const { user, getAccessTokenSilently } = useAuth0();
 
@@ -55,6 +65,8 @@ const UserDetail = () => {
     const [manageAccessFlag, setManageAccessFlag] = useState(false)
     const [showMediaFlag, setShowMediaFlag] = useState(false)
 
+    //#endregion
+
     useEffect(() => {
         getUserObject();
       }, [])
@@ -69,6 +81,7 @@ const UserDetail = () => {
         getSharedMedia()
     }
 
+    //#region UI 
     if(!userObject || userObject == {}){
         return (
             <div>no user selected</div>
@@ -103,6 +116,9 @@ const UserDetail = () => {
         </div>
     )
 
+    //#endregion
+
+    //#region functions
     function getQrCode(){
         setUseQrCode(true)
     }
@@ -440,6 +456,7 @@ const UserDetail = () => {
         })
         setLoading(false)
     }
+    //#endregion
 
 }
 
