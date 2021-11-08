@@ -18,33 +18,42 @@ import ShowMedia from './show-media.component';
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
 const UserDetail = () => {
+    
+    //Auth0 Variables
+    const { user, getAccessTokenSilently } = useAuth0();
 
-    const [myVideos, setMyVideos] = useState([])
-    const [sharedWithMe, setSharedWithMe] = useState([])
-    const [refreshMyVideos, setRefreshMyVideos] = useState(false)
-    const [refreshSharedVideos, setRefreshSharedVideos] = useState(false)
-    const [addVideoFlag, setAddVideoFlag] = useState(false)
-    const [newVideo, setNewVideo] = useState({"name": "", "location": "", "owner": "", "viewers": []})
-    const [manageAccessFlag, setManageAccessFlag] = useState(false)
-    const [newAccessor, setNewAccessor] = useState("")
-    const [selectedVideo, setSelectedVideo] = useState({})
-    const [refresh, setRefresh] = useState(false)
-    const [mediaFile, setMediaFile] = useState({preview: "", raw: "" })
-    const [showMediaFlag, setShowMediaFlag] = useState(false)
-    const [currentMediaLink, setCurrentMediaLink] = useState("")
-    const [mediaLinkDict, setMediaLinkDict] = useState({})
-    const [userObject, setUserObject] = useState({})
-    const [userMediaShown, setUserMediaShown] = useState(true)
-
+    //General Variables
+    const [userObject, setUserObject] = useState({})    
     const [modalAlertFlag, setModalAlertFlag] = useState(false)
     const [modalAlertMessage, setModalAlertMessage] = useState("")
-
     const [loading, setLoading] = useState(false)
+    const [userMediaShown, setUserMediaShown] = useState(true)
 
+    //Media Objects 
+    const [myVideos, setMyVideos] = useState([])
+    const [sharedWithMe, setSharedWithMe] = useState([])
+
+    //triggers to regather data
+    const [refreshMyVideos, setRefreshMyVideos] = useState(false)
+    const [refreshSharedVideos, setRefreshSharedVideos] = useState(false)
+    
+    //New Video Variables
+    const [newVideo, setNewVideo] = useState({"name": "", "location": "", "owner": "", "viewers": []})
+    const [mediaFile, setMediaFile] = useState({preview: "", raw: "" })
+
+    //Share Media Variables
+    const [selectedVideo, setSelectedVideo] = useState({})
+    const [newAccessor, setNewAccessor] = useState("")
+   
+    //Viewing Media Variables
+    const [currentMediaLink, setCurrentMediaLink] = useState("")
+    const [mediaLinkDict, setMediaLinkDict] = useState({})
     const [useQrCode, setUseQrCode] = useState(false);
-    const [qrCode, setQrCode] = useState("")
 
-    const { user, getAccessTokenSilently } = useAuth0();
+    //Modal Flags
+    const [addVideoFlag, setAddVideoFlag] = useState(false)
+    const [manageAccessFlag, setManageAccessFlag] = useState(false)
+    const [showMediaFlag, setShowMediaFlag] = useState(false)
 
     useEffect(() => {
         getUserObject();
@@ -94,14 +103,8 @@ const UserDetail = () => {
         </div>
     )
 
-    async function getQrCode(){
-        setLoading(true)
-        await setQrCode(`http://api.qrserver.com/v1/create-qr-code/?data=${currentMediaLink}!&size=${"400"}x${"400"}&bgcolor=${"ffffff"}`)
-
-        setLoading(false)
-        // console.log(qrCode)
+    function getQrCode(){
         setUseQrCode(true)
-
     }
 
     async function handleVideoUpload(e){
@@ -353,7 +356,6 @@ const UserDetail = () => {
             // console.log(response.status)
             if(response.status == 200){
                 selectedVideo.viewers.push(newAccessor)
-                setRefresh(!refresh)
             }
             else if(response.status == 208){
                 setModalAlertFlag(true)
@@ -387,7 +389,6 @@ const UserDetail = () => {
             // console.log(response.status)
             if(response.status == 200){
                 selectedVideo.viewers.splice(i, 1)
-                setRefresh(!refresh)
             }
         })
         setLoading(false)
