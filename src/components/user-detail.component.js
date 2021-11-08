@@ -10,9 +10,10 @@ import '../css/card.css'
 import '../css/modal.css'
 import UserMedia from './user-media.component';
 import SharedMedia from './shared-media.components';
-import QRCode from "qrcode.react";
 import NavigationBar from './navigation-bar.component';
 import AddMedia from './add-media.component';
+import ShareModal from './share-module.component';
+import ShowMedia from './show-media.component';
 
 const API_URL = process.env.REACT_APP_URL || "any-default-local-build_env";
 
@@ -73,76 +74,23 @@ const UserDetail = () => {
                 </Spinner>
             </div>
         }
-        <div>
-            <NavigationBar userObject={userObject} setUserMediaShown={setUserMediaShown} setAddVideoFlag={setAddVideoFlag}/>
+        <NavigationBar userObject={userObject} setUserMediaShown={setUserMediaShown} setAddVideoFlag={setAddVideoFlag}/>
 
-            {userMediaShown &&
-                <UserMedia myVideos={myVideos} onViewButtonClicked={onViewButtonClicked} setSelectedVideo={setSelectedVideo} setManageAccessFlag={setManageAccessFlag} deleteSingleMedia={deleteSingleMedia} />
-            }
-            {!userMediaShown &&
-                <SharedMedia sharedWithMe={sharedWithMe} onViewButtonClicked={onViewButtonClicked} />
-            }
-            {/* add media */}
-            <AddMedia addVideoFlag={addVideoFlag} setAddVideoFlag={setAddVideoFlag} modalAlertFlag={modalAlertFlag} setModalAlertFlag={setModalAlertFlag} modalAlertMessage={modalAlertMessage} addMedia={addMedia} newVideo={newVideo} onFileChange={onFileChange}/>
+        {userMediaShown &&
+            <UserMedia myVideos={myVideos} onViewButtonClicked={onViewButtonClicked} setSelectedVideo={setSelectedVideo} setManageAccessFlag={setManageAccessFlag} deleteSingleMedia={deleteSingleMedia} />
+        }
+        {!userMediaShown &&
+            <SharedMedia sharedWithMe={sharedWithMe} onViewButtonClicked={onViewButtonClicked} />
+        }
+        {/* add media modal */}
+        <AddMedia addVideoFlag={addVideoFlag} setAddVideoFlag={setAddVideoFlag} modalAlertFlag={modalAlertFlag} setModalAlertFlag={setModalAlertFlag} modalAlertMessage={modalAlertMessage} addMedia={addMedia} newVideo={newVideo} onFileChange={onFileChange} />
 
-            {/* manage access */}
-            <Modal className="modalOverall" show={manageAccessFlag} onHide={() => closeAccessManagerPopup()} centered>
-                <Modal.Header className="modalHeader" closeButton>
-                    <Modal.Title>manage access</Modal.Title>
-                    {modalAlertFlag && 
-                        <Alert variant="danger" onClose={() => setModalAlertFlag(false)} dismissible>
-                            {modalAlertMessage}
-                        </Alert>
-                    }
-                </Modal.Header>
+        {/* manage access modal */}
+        <ShareModal manageAccessFlag={manageAccessFlag} closeAccessManagerPopup={closeAccessManagerPopup} modalAlertFlag={modalAlertFlag} modalAlertMessage={modalAlertMessage} setModalAlertFlag={setModalAlertFlag} setNewAccessor={setNewAccessor} addAccessor={addAccessor} selectedVideo={selectedVideo} removeAccessor={removeAccessor}/>
 
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label >new accessor</Form.Label>
-                            <Form.Control className="textBox" onChange={(event) => {setNewAccessor(event.target.value)}}/>
-                        </Form.Group>
-                        <Button className="modalButton" variant="outline-dark" onClick={() => addAccessor()}>Add</Button>
-                    </Form>
-                </Modal.Body>
-                <Modal.Body className="modalBody">
-                    {selectedVideo && selectedVideo.viewers && selectedVideo.viewers.map((viewer, i) => (
-                            <Card className="modalList">
-                                <Row>
-                                    <Col>
-                                        {viewer}
-                                    </Col>
-                                    <Col >
-                                        <Button className="modalButton" variant="outline-dark" variant="outline-dark" onClick={() => removeAccessor(viewer, i)}>remove</Button>
-                                    </Col>
-                                </Row>
-                            </Card>
-                        ))
-                    }
-                </Modal.Body>
-                <Modal.Footer className="modalFooter">
-                    <Button className="modalButton" variant="outline-dark" onClick={() => closeAccessManagerPopup()}>Close</Button>
-                </Modal.Footer>
-            </Modal>
-            
-            {/* show media */}
-            <Modal className="modalOverall" show={showMediaFlag} onHide={() => setShowMediaFlag(false)} centered>
-                <Modal.Header className="modalHeader" closeButton>
-                    <Button className="modalButton2" variant="outline-dark" onClick={() => setUseQrCode(false)}>media</Button>
-                    <Button className="modalButton2" variant="outline-dark" onClick={()=>getQrCode()}>QR code</Button>
-                    <a href={currentMediaLink} style={{color: "black"}} target="_blank">external link</a>
-                </Modal.Header>
-
-                <Modal.Body >
-                    {useQrCode &&
-                        <QRCode value={currentMediaLink} />
-                    }
-                    {!useQrCode &&
-                        <img src={currentMediaLink} alt="could not display. use external link" className="img-fluid" ></img>
-                    }
-                </Modal.Body>
-            </Modal> 
-        </div>
+        {/* show media modal */}
+        <ShowMedia showMediaFlag={showMediaFlag} setShowMediaFlag={setShowMediaFlag} setUseQrCode={setUseQrCode} getQrCode={getQrCode} currentMediaLink={currentMediaLink} useQrCode={useQrCode}/>
+        
         </div>
     )
 
