@@ -69,7 +69,7 @@ const UserDetail = () => {
         <div>
         {loading &&
             <div className="overlay">
-                {console.log("test")}
+                {/* {console.log("test")} */}
                 <Spinner animation="border" role="status" className="spinnerStyle">
                 </Spinner>
             </div>
@@ -99,14 +99,14 @@ const UserDetail = () => {
         await setQrCode(`http://api.qrserver.com/v1/create-qr-code/?data=${currentMediaLink}!&size=${"400"}x${"400"}&bgcolor=${"ffffff"}`)
 
         setLoading(false)
-        console.log(qrCode)
+        // console.log(qrCode)
         setUseQrCode(true)
 
     }
 
     async function handleVideoUpload(e){
         setLoading(true)
-        console.log("uploading media file")
+        // console.log("uploading media file")
         
         var formData = new FormData()
         formData.append("video", mediaFile.raw)
@@ -124,7 +124,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 setMediaFile({preview: "", raw: "" })
                 setRefreshMyVideos(true)
@@ -135,7 +135,7 @@ const UserDetail = () => {
 
     async function addNewUser(){
         setLoading(true)
-        console.log("adding new user")
+        // console.log("adding new user")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -153,7 +153,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response)
+            // console.log(response)
             if(response.status == 200){
                 getUserObject()
             }
@@ -163,7 +163,7 @@ const UserDetail = () => {
 
     async function getUserObject() {
         setLoading(true)
-        console.log("getting user object");
+        // console.log("getting user object");
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -176,7 +176,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 if(!response.data){
                     addNewUser()
@@ -216,7 +216,7 @@ const UserDetail = () => {
     //on success, the presigned url is stored for later usage
     async function getMediaLink(location){
         setLoading(true)
-        console.log("getting media link")
+        // console.log("getting media link")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -229,10 +229,10 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 mediaLinkDict[location] = response.data
-                console.log(response.data)
+                // console.log(response.data)
                 setCurrentMediaLink(response.data)
                 setShowMediaFlag(true)
             }
@@ -252,7 +252,7 @@ const UserDetail = () => {
 
     async function getMediaForUser(){
         setLoading(true)
-        console.log("getting media for user")
+        // console.log("getting media for user")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -268,7 +268,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 setMyVideos(response.data)
             }
@@ -278,7 +278,7 @@ const UserDetail = () => {
 
     async function getSharedMedia(){
         setLoading(true)
-        console.log("getting shared media for user")
+        // console.log("getting shared media for user")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -294,7 +294,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 setSharedWithMe(response.data)
             }
@@ -304,7 +304,7 @@ const UserDetail = () => {
 
     async function deleteSingleMedia(id, i){
         setLoading(true)
-        console.log("deleting media")
+        // console.log("deleting media")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -317,7 +317,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 userObject.media.splice(i, 1)
                 setRefreshMyVideos(true)
@@ -328,7 +328,7 @@ const UserDetail = () => {
 
     async function addAccessor(){
         setLoading(true)
-        console.log("sharing media")
+        // console.log("sharing media")
 
         if(newAccessor == user.email){
             setModalAlertFlag(true)
@@ -350,7 +350,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 selectedVideo.viewers.push(newAccessor)
                 setRefresh(!refresh)
@@ -368,7 +368,7 @@ const UserDetail = () => {
 
     async function removeAccessor(accessor, i){
         setLoading(true)
-        console.log("removing accessor")
+        // console.log("removing accessor")
 
         const token = await getAccessTokenSilently({
             audience: "https://videoshare/api",
@@ -384,7 +384,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 selectedVideo.viewers.splice(i, 1)
                 setRefresh(!refresh)
@@ -395,7 +395,7 @@ const UserDetail = () => {
 
     async function addMedia(){
         setLoading(true)
-        console.log("adding media for user")
+        // console.log("adding media for user")
 
         var mediatype = "";
         try{
@@ -429,7 +429,7 @@ const UserDetail = () => {
             },
             responseType: 'json',
         }).then(response => {
-            console.log(response.status)
+            // console.log(response.status)
             if(response.status == 200){
                 setAddVideoFlag(false)
                 newVideo.name = ""
